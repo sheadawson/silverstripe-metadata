@@ -44,6 +44,11 @@ class MetaDataFieldAddForm implements GridField_URLHandler {
     protected $component;
     protected $record;
 
+    private static $allowed_actions = array(
+    	'AddForm',
+    	'add'
+    );
+
     static $url_handlers = array(
 		'$Action!' => '$Action',
 		'' => 'add',
@@ -57,7 +62,7 @@ class MetaDataFieldAddForm implements GridField_URLHandler {
 		return Controller::join_links($this->gridField->Link('add'), $action);
 	}
 
-	function add($request) {
+	public function add($request) {
 		$controller = $this->getToplevelController();
 		$form = $this->AddForm($this->gridField, $request);
 
@@ -83,8 +88,8 @@ class MetaDataFieldAddForm implements GridField_URLHandler {
 	 */
 	public function AddForm() {
 		$fields = new FieldList(
-			new LiteralField('SelectFieldType', '<p><strong>Please select a field type to add:</strong></p>'),
-			new DropdownField('ClassName', '', $this->getFieldTypes(), null, null, true)
+			LiteralField::create('SelectFieldType', '<p><strong>Please select a field type to add:</strong></p>'),
+			DropdownField::create('ClassName', '', $this->getFieldTypes())->setHasEmptyDefault(true)
 		);
 
 		if($schemaID = (int)$this->request->param('ID')) {
